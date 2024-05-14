@@ -9,7 +9,11 @@ export default {
   ],
   presets: [keepPreset],
   theme: {
-    extend: {},
+    extend: {
+      fontFamily: {
+        poppins: 'Poppins, sans-serif',
+      }
+    },
   },
   plugins: [],
 }

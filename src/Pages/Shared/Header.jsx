@@ -1,51 +1,57 @@
 
-import { MagnifyingGlass } from "phosphor-react";
-import { Navbar, Button } from "keep-react";
+import { MagnifyingGlass, ShoppingCart, User } from "phosphor-react";
+import { Navbar } from "keep-react";
 import { Icon, Input } from 'keep-react'
+import { NavLink } from "react-router-dom";
 
 const Header = () => {
     return (
         <Navbar fluid={true}>
             <Navbar.Container className="flex items-center justify-between">
-                <Navbar.Container className="flex items-center">
+                <Navbar.Container className="flex items-center justify-start gap-10">
                     <Navbar.Brand>
                         <img
-                            src="/images/keep.svg"
-                            alt="keep"
-                            width="100"
+                            src="https://i.ibb.co/gzf9QHw/Gray-and-Black-Simple-Studio-Logo-removebg-preview.png"
+                            alt="GADGET24"
+                            width="150"
                             height="40"
                         />
                     </Navbar.Brand>
-                    <Navbar.Divider></Navbar.Divider>
                     <Navbar.Container
                         tag="ul"
-                        className="lg:flex hidden items-center justify-between gap-8"
+                        className="lg:flex hidden items-center justify-between gap-8 text-md"
                     >
-                        <Navbar.Link linkName="Home" />
-                        <Navbar.Link linkName="Projects" />
-                        <Navbar.Link linkName="About" />
+                        <NavLink to='/'> Home </NavLink>
+                        <NavLink to='/'>Category</NavLink>
+                        <NavLink to='/'>About Us</NavLink>
                     </Navbar.Container>
                     <Navbar.Collapse collapseType="sidebar">
                         <Navbar.Container tag="ul" className="flex flex-col gap-5">
-                            <Navbar.Link linkName="Home" />
-                            <Navbar.Link linkName="Projects" />
-                            <Navbar.Link linkName="Blogs" />
-                            <Navbar.Link linkName="News" />
-                            <Navbar.Link linkName="Resources" />
+                            <NavLink to='/'>Home</NavLink>
+                            <NavLink to='/'>Category</NavLink>
+                            <NavLink to='/'>About Us</NavLink>
+                            <NavLink to='/'>Shopping Cart</NavLink>
                         </Navbar.Container>
                     </Navbar.Collapse>
                 </Navbar.Container>
 
-                <Navbar.Container className="flex gap-10">
+                <Navbar.Container className="flex gap-3 md:gap-10">
                     <fieldset className="relative max-w-md">
                         <Input placeholder="Search" className="ps-11" />
                         <Icon>
                             <MagnifyingGlass size={19} color="#AFBACA" />
                         </Icon>
                     </fieldset>
-                    <Button size="sm">
-                        Contact
-                    </Button>
+
+                    <div className="flex gap-5 items-center">
+                        <NavLink className='hidden md:block'>
+                            <ShoppingCart size={20} color="#444" />
+                        </NavLink>
+
+                        <NavLink>
+                            <User size={20} color="#444" />
+                        </NavLink>
+                    </div>
                     <Navbar.Toggle />
                 </Navbar.Container>
             </Navbar.Container>

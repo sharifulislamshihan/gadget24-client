@@ -5,12 +5,14 @@ import Footer from "../Pages/Shared/Footer";
 
 const Main = () => {
     return (
-        <div className="mx-5 md:mx-20">
-            <Header></Header>
-            <div>
+        <div className="max-w-screen-2xl mx-auto font-poppins">
+            <div className="mx-1 md:mx-5">
+                <Header></Header>
+
                 <Outlet></Outlet>
+
+                <Footer></Footer>
             </div>
-            <Footer></Footer>
         </div>
     );
 };
