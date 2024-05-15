@@ -21,7 +21,7 @@ const BestSelling = () => {
             <p className="mb-10 text-[#425a8b]">Special products in this month.</p>
             <Divider />
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 mt-10">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 mt-10 mx-5">
                 {
                     data.map(items => <div
                         key={items._id}

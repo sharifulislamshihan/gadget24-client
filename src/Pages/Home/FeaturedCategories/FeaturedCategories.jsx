@@ -25,7 +25,7 @@ const FeaturedCategories = () => {
 
             <Divider></Divider>
 
-            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6 mt-10">
+            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6 mt-10 mx-5">
                 {
                     category.map(items => <FeaturedCategoryCard
                         key={items._id}

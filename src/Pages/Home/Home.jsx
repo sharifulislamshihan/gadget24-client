@@ -1,5 +1,6 @@
 import Banner from "./Banner/Banner";
 import BestSelling from "./BestSelling/BestSelling";
+import ExploreUs from "./ExploreUs/ExploreUs";
 import FeaturedCategories from "./FeaturedCategories/FeaturedCategories";
 import IphoneBanner from "./IphoneBanner/IphoneBanner";
 import PhoneAd from "./PhoneAd/PhoneAd";
@@ -15,6 +16,7 @@ const Home = () => {
             <BestSelling></BestSelling>
             <PhoneAd></PhoneAd>
             <SupportCard></SupportCard>
+            <ExploreUs></ExploreUs>
         </div>
     );
 };
