@@ -31,7 +31,7 @@ const Header = () => {
                             <NavLink to='/'>Category</NavLink>
                             <NavLink to='/'>About Us</NavLink>
                             <NavLink className='md:hidden lg:block' to='/'>Shopping Cart</NavLink>
-                            <NavLink className='md:hidden lg:block' to='/'>Login/Register</NavLink>
+                            <NavLink className='md:hidden lg:block' to='/login'>Login/Register</NavLink>
                         </Navbar.Container>
                     </Navbar.Collapse>
                 </Navbar.Container>
@@ -49,7 +49,7 @@ const Header = () => {
                             <ShoppingCart size={20} color="#444" />
                         </NavLink>
 
-                        <NavLink className='hidden md:block'>
+                        <NavLink to='/login' className='hidden md:block'>
                             <User size={20} color="#444" />
                         </NavLink>
                     </div>
