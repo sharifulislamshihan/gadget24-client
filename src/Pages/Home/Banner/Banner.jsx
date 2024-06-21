@@ -11,7 +11,7 @@ const Banner = () => {
 
                         <Carousel.Item>
                             <div>
-                                <img src="https://i.ibb.co/0VvZbNF/Beige-Minimalist-Fashion-Product-Promotion-Facebook-Ad.png" alt="" />
+                                <img src="https://i.postimg.cc/k4YnQCPP/Beige-Minimalist-Fashion-Product-Promotion-Facebook-Ad.png" alt="" />
                             </div>
                         </Carousel.Item>
 
@@ -44,7 +44,7 @@ const Banner = () => {
                 </div>
 
                 <div className="rounded-xl hidden lg:block">
-                    <img src="https://i.ibb.co/0VvZbNF/Beige-Minimalist-Fashion-Product-Promotion-Facebook-Ad.png" alt="" />
+                    <img src="https://i.postimg.cc/k4YnQCPP/Beige-Minimalist-Fashion-Product-Promotion-Facebook-Ad.png" alt="" />
                 </div>
 
                 <div className="rounded-xl">

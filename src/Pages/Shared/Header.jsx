@@ -1,5 +1,6 @@
 
 import { MagnifyingGlass, ShoppingCart, User } from "phosphor-react";
+import { slide as Menu } from 'react-burger-menu'
 import { Navbar } from "keep-react";
 import { Icon, Input } from 'keep-react'
 import { NavLink } from "react-router-dom";
@@ -7,16 +8,18 @@ import { NavLink } from "react-router-dom";
 const Header = () => {
     return (
         <Navbar fluid={true}>
-            <Navbar.Container className="flex items-center justify-between">
+            <Navbar.Container className="flex items-center justify-between my-10">
                 <Navbar.Container className="flex items-center justify-start gap-10">
                     <Navbar.Brand>
                         <img
-                            src="https://i.ibb.co/gzf9QHw/Gray-and-Black-Simple-Studio-Logo-removebg-preview.png"
+                            src="https://i.postimg.cc/85NFKNYF/Gray-and-Black-Simple-Studio-Logo-removebg-preview.png"
                             alt="GADGET24"
                             width="150"
                             height="40"
                         />
                     </Navbar.Brand>
+
+                    {/* Large view */}
                     <Navbar.Container
                         tag="ul"
                         className="lg:flex hidden items-center justify-between gap-8 text-md"
@@ -25,6 +28,8 @@ const Header = () => {
                         <NavLink to='/'>Category</NavLink>
                         <NavLink to='/'>About Us</NavLink>
                     </Navbar.Container>
+
+                    {/* tab and mobile view */}
                     <Navbar.Collapse collapseType="sidebar">
                         <Navbar.Container tag="ul" className="flex flex-col gap-5">
                             <NavLink to='/'>Home</NavLink>
@@ -46,7 +51,17 @@ const Header = () => {
 
                     <div className="flex gap-5 items-center">
                         <NavLink className='hidden md:block'>
-                            <ShoppingCart size={20} color="#444" />
+                            <ShoppingCart size={20} color="#444" collapseType="sidebar" >
+                                <Navbar.Collapse >
+                                    <Navbar.Container tag="ul" className="flex flex-col gap-5">
+                                        <NavLink to='/'>Home</NavLink>
+                                        <NavLink to='/'>Category</NavLink>
+                                        <NavLink to='/'>About Us</NavLink>
+                                        <NavLink className='md:hidden lg:block' to='/'>Shopping Cart</NavLink>
+                                        <NavLink className='md:hidden lg:block' to='/login'>Login/Register</NavLink>
+                                    </Navbar.Container>
+                                </Navbar.Collapse>
+                            </ShoppingCart>
                         </NavLink>
 
                         <NavLink to='/login' className='hidden md:block'>
@@ -56,7 +71,7 @@ const Header = () => {
                     <Navbar.Toggle />
                 </Navbar.Container>
             </Navbar.Container>
-        </Navbar>
+        </Navbar >
     );
 };
 
