@@ -2,10 +2,14 @@
 import { Envelope, FacebookLogo, GoogleLogo, Lock } from 'phosphor-react'
 import { Button, Card, Divider, Icon, Input, Label } from 'keep-react'
 import { NavLink } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 
 const Login = () => {
     return (
         <div className='flex justify-center mt-10 mb-20'>
+            <Helmet>
+                <title>Login|Gadget24</title>
+            </Helmet>
             <Card className="max-w-sm">
                 <Card.Content className="space-y-3">
                     <h3 className='text-4xl font-bold text-center'>Login</h3>
