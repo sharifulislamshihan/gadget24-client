@@ -30,7 +30,7 @@ const Login = () => {
     return (
         <div className='flex justify-center mt-10 mb-20'>
             <Helmet>
-                <title>Login | Gadget24</title>
+                <title>Login - Gadget24</title>
             </Helmet>
             <Card className="max-w-sm">
                 <Card.Content className="space-y-3">
