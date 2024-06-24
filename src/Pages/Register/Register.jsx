@@ -1,32 +1,42 @@
 import { useForm } from "react-hook-form";
-import { FacebookLogo, GoogleLogo } from 'phosphor-react'
+import { Eye, EyeSlash, FacebookLogo, GoogleLogo } from 'phosphor-react'
 import { Button, Card, Divider, Input, Label } from 'keep-react'
 import { NavLink } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
-import useAxiosPublic from "../../Hooks/useAxiosPublic";
+import { useState } from "react";
+//import useAxiosPublic from "../../Hooks/useAxiosPublic";
 
 
 // img hosting imgbb
-const image_hosting_key = import.meta.env.VITE_IMAGE_HOSTING_KEY;
-const image_hosting_api = `https://api.imgbb.com/1/upload?key=${image_hosting_key}`;
+//const image_hosting_key = import.meta.env.VITE_IMAGE_HOSTING_KEY;
+//const image_hosting_api = `https://api.imgbb.com/1/upload?key=${image_hosting_key}`;
 
 const Register = () => {
 
-    const { register, handleSubmit, formState: { errors }, watch } = useForm();
+    const [passwordVisible, setPasswordVisible] = useState(false);
+    const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
 
-    const axiosPublic = useAxiosPublic();
+    const handlePasswordVisible = () => {
+        setPasswordVisible(!passwordVisible)
+    }
+
+    const handleConfirmPasswordVisible = () => {
+        setConfirmPasswordVisible(!confirmPasswordVisible)
+    }
+
+    const { register, handleSubmit, formState: { errors }, watch } = useForm();
 
     const onSubmit = async (data) => {
         console.log(data);
 
         // upload image into imgbb and then ger the url
-        const imageFile = { image: data.image[0] }
-        const res = await axiosPublic.post(image_hosting_key, imageFile, {
-            headers: {
-                'Content-Type': 'multipart/form-data'
-            }
-        })
-        console.log(res.data);
+        //     const imageFile = { image: data.image[0] }
+        //     const res = await axiosPublic.post(image_hosting_key, imageFile, {
+        //         headers: {
+        //             'Content-Type': 'multipart/form-data'
+        //         }
+        //     })
+        //     console.log(res.data);
     }
 
     // const handleRegister = e => {
@@ -50,14 +60,16 @@ const Register = () => {
     // console.log(user);
     //}
 
-     // Watch password value to validate confirm password
+    // Watch password value to validate confirm password
     const password = watch('password');
     return (
         <div className='flex justify-center mt-10 mb-20'>
+
             {/* helmet */}
             <Helmet>
                 <title>Register|Gadget24</title>
             </Helmet>
+
             {/* <Card className="w-96"> */}
             <Card.Content className="space-y-3">
                 <h3 className='text-4xl font-bold text-center'>Register</h3>
@@ -101,7 +113,10 @@ const Register = () => {
                             <div className="relative">
                                 <Input
                                     id="password"
-                                    placeholder="Enter password" type="password"
+                                    className="w-full"
+                                    placeholder="Enter password"
+                                    type={passwordVisible ? 'text' : 'password'}
+                                    name='password'
                                     {...register('password', {
                                         required: 'Password is required',
                                         minLength: {
@@ -118,24 +133,36 @@ const Register = () => {
                                             message: 'Password must contain at least one uppercase letter and one special character',
                                         },
                                     })} />
-                                {errors.password && <p className="text-red-500">{errors.password.message}</p>}
+                                <button
+                                    onClick={handlePasswordVisible}
+                                    className='absolute inset-y-0 right-0 flex items-center px-4'>
+                                    {passwordVisible ? <EyeSlash /> : <Eye />}
+                                </button>
                             </div>
+                            {errors.password && <p className="text-red-500">{errors.password.message}</p>}
                         </fieldset>
 
                         <fieldset className="space-y-1">
                             <Label htmlFor="password">Confirm Password*</Label>
                             <div className="relative">
                                 <Input
+                                    className="w-full"
                                     placeholder="Confirm Password"
-                                    type="password"
+                                    type={confirmPasswordVisible ? 'text' : 'password'}
                                     {...register('confirmPassword', {
                                         required: 'Confirm Password is required',
                                         validate: value =>
                                             value === password || 'Password did not match',
                                     })}
                                 />
-                                {errors.confirmPassword && <p className="text-red-500">{errors.confirmPassword.message}</p>}
+                                <button
+                                    onClick={handleConfirmPasswordVisible}
+                                    className='absolute inset-y-0 right-0 flex items-center px-4'>
+                                    {confirmPasswordVisible ? <EyeSlash /> : <Eye />}
+                                </button>
+
                             </div>
+                            {errors.confirmPassword && <p className="text-red-500">{errors.confirmPassword.message}</p>}
                         </fieldset>
 
                     </fieldset>

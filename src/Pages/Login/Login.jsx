@@ -1,23 +1,50 @@
 /* eslint-disable react/no-unescaped-entities */
-import { Envelope, FacebookLogo, GoogleLogo, Lock } from 'phosphor-react'
+import { Envelope, Eye, EyeSlash, FacebookLogo, GoogleLogo, Lock } from 'phosphor-react'
 import { Button, Card, Divider, Icon, Input, Label } from 'keep-react'
 import { NavLink } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
+import { useContext, useState } from 'react';
+import { AuthContext } from '../../Providers/AuthProvider';
 
 const Login = () => {
+
+    // password visible function
+    const [passwordVisible, setPasswordVisible] = useState(false);
+    const handlePasswordVisible = () =>{
+        setPasswordVisible(!passwordVisible)
+    }
+
+    const { signIn } = useContext(AuthContext)
+
+    const handleLogin = e => {
+        e.preventDefault();
+        const form = e.target;
+        const email = form.email.value;
+        const password = form.password.value;
+        console.log(email, password);
+        signIn(email, password)
+        .then(res =>{
+            console.log(res.user);
+        })
+    }
     return (
         <div className='flex justify-center mt-10 mb-20'>
             <Helmet>
-                <title>Login|Gadget24</title>
+                <title>Login | Gadget24</title>
             </Helmet>
             <Card className="max-w-sm">
                 <Card.Content className="space-y-3">
                     <h3 className='text-4xl font-bold text-center'>Login</h3>
-                    <form className="space-y-2">
+                    <form onSubmit={handleLogin} className="space-y-2">
                         <fieldset className="space-y-1">
                             <Label htmlFor="email">Email*</Label>
                             <div className="relative">
-                                <Input id="email" type="email" placeholder="Enter email" className="ps-11" />
+                                <Input
+                                    type="email"
+                                    placeholder="Enter email"
+                                    className='ps-11'
+                                    name='email'
+                                    required />
                                 <Icon>
                                     <Envelope size={19} color="#AFBACA" />
                                 </Icon>
@@ -26,8 +53,19 @@ const Login = () => {
                         <fieldset className="space-y-1">
                             <Label htmlFor="password">Password*</Label>
                             <div className="relative">
-                                <Input id="password" placeholder="Enter password" type="password" className="ps-11" />
+                                <Input
+                                    className='ps-11'
+                                    id="password"
+                                    placeholder="Enter password" 
+                                    type={passwordVisible ? 'text' : 'password'}
+                                    name='password'
+                                    required />
+                                    <button 
+                                    onClick={handlePasswordVisible}
+                                    className='absolute inset-y-0 right-0 flex items-center px-4'>
+                                        {passwordVisible ? <EyeSlash/>  : <Eye/>}
 
+                                    </button>
                                 <Icon>
                                     <Lock size={19} color="#AFBACA" />
                                 </Icon>
