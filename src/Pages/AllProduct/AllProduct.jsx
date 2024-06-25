@@ -2,7 +2,8 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { BiHome } from "react-icons/bi";
 import { api } from "../Shared/SharedFetchApi";
-import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle, Divider, Spinner } from "keep-react";
+import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle, Divider, Empty, EmptyImage, EmptyTitle, Pagination, PaginationItem, PaginationList, PaginationNavigator, Spinner } from "keep-react";
+import { CaretLeft, CaretRight } from "phosphor-react";
 
 const AllProduct = () => {
 
@@ -10,6 +11,13 @@ const AllProduct = () => {
     const [products, setProducts] = useState([]);
     const [filteredProducts, setFilteredProducts] = useState([])
     const [loading, setLoading] = useState(true);
+    const [numberOfProduct, setNumberOfProduct] = useState(0);
+    const [brandName, setBrandName] = useState("")
+
+
+    const [currentPage, setCurrentPage] = useState(0);
+    //const [productsPerPage, setProductsPerPage] = useState(20);
+    const productsPerPage = 15;
 
     useEffect(() => {
         // fetching category
@@ -21,10 +29,12 @@ const AllProduct = () => {
 
 
 
-        // fetching Product
-        axios.get(`${api}products/`)
+        // fetching Products
+        axios.get(`${api}products?page=${currentPage}&size=${productsPerPage}`)
             .then(res => {
-                const products = res.data.payload.products
+                const products = res.data.payload.products;
+                const numberOfProduct = res.data.payload.totalNumberOfProducts;
+                setNumberOfProduct(numberOfProduct);
                 setProducts(products);
                 setFilteredProducts(products);
                 setLoading(false);
@@ -35,12 +45,25 @@ const AllProduct = () => {
                 console.error(error);
                 setLoading(false);
             })
-    }, [])
+    }, [currentPage, productsPerPage])
 
-    const handleCategoryClick = (slug) => {
+    // show product category wise
+    const handleCategoryClick = async (slug, name) => {
         console.log(slug);
-        const filtered = products.filter(product => product.categorySlug === slug);
-        setFilteredProducts(filtered);
+        setLoading(true);
+        try {
+            //filter product as the category clicked
+            const filtered = products.filter(product => product.category === slug);
+            setBrandName(name);
+            setFilteredProducts(filtered);
+            setNumberOfProduct(filteredProducts.length)
+        }
+        catch (error) {
+            console.error(error);
+        }
+        finally {
+            setLoading(false);
+        }
     };
 
     if (loading) {
@@ -52,12 +75,58 @@ const AllProduct = () => {
         </div>
     }
 
+// todo: pagination need to be fixed properly
 
+
+    // show all the product in the all button
+    const handleShowAllProduct = () => {
+        setFilteredProducts(products);
+        setBrandName('');
+    };
+
+
+    // add to cart
+    const handleAddToCart = (_id) => {
+        console.log(_id);
+    }
+
+    // handle product per page
+    // const handleItemsPerPageChange = e => {
+    //     const val = parseInt(e.target.value)
+    //     setProductsPerPage(val);
+    //     setCurrentPage(0);
+    // }
+
+    // handle previous page in the pagination
+    const handlePreviousPage = () => {
+        if (currentPage > 0) {
+            setCurrentPage(currentPage - 1)
+        }
+    }
+
+    // handle next page in the pagination
+    const handleNextPage = () => {
+        if (currentPage < pages.length - 1) {
+            setCurrentPage(currentPage + 1);
+        }
+    }
+
+    const totalProduct = numberOfProduct;
+    console.log(totalProduct);
+    const numberOfPages = Math.ceil(totalProduct / productsPerPage);
+    const pages = [...Array(numberOfPages).keys()];
+    console.log("pages : ", pages);
+
+    /**
+     * todo : get total number of product
+     * todo : items per page
+     * todo : get the current page
+     */
     return (
         <div className="mx-5 md:mx-10">
             <div className="flex justify-center md:justify-start">
                 <BiHome className="text-xl" />
-                <h2>/ Products</h2>
+                <h2>/ Products /{brandName}</h2>
             </div>
 
             <div className="my-10">
@@ -68,6 +137,13 @@ const AllProduct = () => {
             {/* category button */}
 
             <div className="flex flex-wrap gap-3">
+                <Button
+                    size="xs"
+                    className="rounded-xl"
+                    color="secondary"
+                    variant="outline"
+                    onClick={() => handleShowAllProduct()}
+                >All</Button>
                 {
                     categories.map(category => (
                         <Button
@@ -75,13 +151,29 @@ const AllProduct = () => {
                             className="rounded-xl"
                             color="secondary"
                             variant="outline"
-                            onClick={() => handleCategoryClick(category.slug)}
+                            onClick={() => handleCategoryClick(category.slug, category.name)}
                             key={category._id}
 
                         >{category.name}</Button>
                     )
                     )}
             </div>
+
+            {/* drop down menu for pagination */}
+
+            {/* <div className="flex my-10">
+                <h3>Show : </h3>
+                <select value={productsPerPage}
+                    onChange={handleItemsPerPageChange}
+                    name=""
+                    id="">
+                    <option value="10">10</option>
+                    <option value="20">20</option>
+                    <option value="50">50</option>
+                </select>
+            </div> */}
+
+
 
             {/* products */}
             <div className="my-12">
@@ -119,7 +211,9 @@ const AllProduct = () => {
                                                 <Button
                                                     size="sm" color="secondary"
                                                     className="w-3/4 hover:bg-slate-500 hover:text-white"
-                                                    variant="outline">
+                                                    variant="outline"
+                                                    onClick={() => handleAddToCart(product._id)}
+                                                >
                                                     Add to Cart
                                                 </Button>
                                             </div>
@@ -132,7 +226,17 @@ const AllProduct = () => {
                         :
                         (
                             <div>
-                                <h3 className="text-center">No products found</h3>
+                                <Empty>
+                                    <EmptyImage>
+                                        <img
+                                            src="https://staticmania.cdn.prismic.io/staticmania/a8befbc0-90ae-4835-bf37-8cd1096f450f_Property+1%3DSearch_+Property+2%3DSm.svg"
+                                            height={234}
+                                            width={350}
+                                            alt="404"
+                                        />
+                                    </EmptyImage>
+                                    <EmptyTitle>Sorry, No Product found!</EmptyTitle>
+                                </Empty>
                             </div>
                         )
 
@@ -140,7 +244,39 @@ const AllProduct = () => {
             </div>
 
 
+            {/* Pagination */}
+            <Pagination shape="circle" className="flex justify-center my-12">
 
+                {/* previous button */}
+                <PaginationNavigator
+                    className="hover:bg-slate-200"
+                    onClick={handlePreviousPage}
+                    shape="circle">
+                    <CaretLeft size={18}
+                        color="#0000FF"
+                    />
+                </PaginationNavigator>
+                <PaginationList>
+                    {
+                        pages.map(page =>
+                            <PaginationItem
+                                className={currentPage === page && 'bg-black text-white hover:bg-black hover:text-white'}
+                                onClick={() => setCurrentPage(page)}
+                                key={page}
+                            >{page + 1}</PaginationItem>
+                        )
+                    }
+                </PaginationList>
+
+                {/* next button */}
+                <PaginationNavigator
+                    className="hover:bg-slate-200"
+                    onClick={handleNextPage}
+                    shape="circle">
+                    <CaretRight size={18}
+                        color="#0000FF" />
+                </PaginationNavigator>
+            </Pagination>
         </div>
     );
 };

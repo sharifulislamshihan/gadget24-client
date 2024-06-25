@@ -1,20 +1,20 @@
-{
+[
 
     {
-        name: "Xiaomi 12 Pro",
-        slug: "xiaomi-12-pro",
-        description:
+        "name": "Xiaomi 12 Pro",
+        "slug": "xiaomi-12-pro",
+        "description":
             "The Xiaomi 12 Pro boasts a powerful Snapdragon 8 Gen 1 processor, a stunning AMOLED display, and a versatile triple-camera system, making it a top contender in the flagship phone market.",
-        price: 85000,
-        category: "xiaomi",
-        image: "https://f...content-available-to-author-only...a.com/vv/bigpic/xiaomi-redmi-note-12-pro.jpg",
-        sold: 20,
-        quantity: 100,
-        shipping: 0,
-        categoryId: "663df64efd07e3418b9525fd",
-        __v: 0,
-        createdAt: 2024-05 -09T21: 25:00.757 +00:00,
-        updatedAt: 2024-05 -09T21: 25:00.757 +00:00,
+        "price": 85000,
+        "category": "xiaomi",
+        "quantity": 100,
+        "sold": 20,
+        "image": "https://f...content-available-to-author-only...a.com/vv/bigpic/xiaomi-redmi-note-12-pro.jpg",
+        "shipping": 0,
+        "categoryId": "663df64efd07e3418b9525fd",
+        "__v": 0,
+        "createdAt": 2024-05 -09T21: 25:00.757 +00:00,
+        "updatedAt": 2024-05 -09T21: 25:00.757 +00:00,
     },
     {
         name: "Xiaomi 11T Pro",
@@ -160,6 +160,9 @@
         createdAt: 2024-05 -09T21: 25:00.757 +00:00,
         updatedAt: 2024-05 -09T21: 25:00.757 +00:00,
     },
+
+
+    // 
     {
         name: "OnePlus 9 Pro",
         slug: "one-plus-9-pro",
@@ -1062,4 +1065,4 @@
         createdAt: 2024-05 -09T21: 25:00.757 +00:00,
         updatedAt: 2024-05 -09T21: 25:00.757 +00:00,
     },
-};
+];
