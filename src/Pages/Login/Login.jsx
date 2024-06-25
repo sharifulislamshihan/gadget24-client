@@ -1,6 +1,6 @@
 /* eslint-disable react/no-unescaped-entities */
 import { Envelope, Eye, EyeSlash, FacebookLogo, GoogleLogo, Lock } from 'phosphor-react'
-import { Button, Card, Divider, Icon, Input, Label } from 'keep-react'
+import { Button, Card, Divider, Input, Label } from 'keep-react'
 import { NavLink } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { useContext, useState } from 'react';
@@ -10,7 +10,7 @@ const Login = () => {
 
     // password visible function
     const [passwordVisible, setPasswordVisible] = useState(false);
-    const handlePasswordVisible = () =>{
+    const handlePasswordVisible = () => {
         setPasswordVisible(!passwordVisible)
     }
 
@@ -23,9 +23,9 @@ const Login = () => {
         const password = form.password.value;
         console.log(email, password);
         signIn(email, password)
-        .then(res =>{
-            console.log(res.user);
-        })
+            .then(res => {
+                console.log(res.user);
+            })
     }
     return (
         <div className='flex justify-center mt-10 mb-20'>
@@ -45,9 +45,7 @@ const Login = () => {
                                     className='ps-11'
                                     name='email'
                                     required />
-                                <Icon>
-                                    <Envelope size={19} color="#AFBACA" />
-                                </Icon>
+                                <Envelope size={19} color="#AFBACA" />
                             </div>
                         </fieldset>
                         <fieldset className="space-y-1">
@@ -56,16 +54,16 @@ const Login = () => {
                                 <Input
                                     className='ps-11'
                                     id="password"
-                                    placeholder="Enter password" 
+                                    placeholder="Enter password"
                                     type={passwordVisible ? 'text' : 'password'}
                                     name='password'
                                     required />
-                                    <button 
+                                <button
                                     onClick={handlePasswordVisible}
                                     className='absolute inset-y-0 right-0 flex items-center px-4'>
-                                        {passwordVisible ? <EyeSlash/>  : <Eye/>}
+                                    {passwordVisible ? <EyeSlash /> : <Eye />}
 
-                                    </button>
+                                </button>
                                 <Icon>
                                     <Lock size={19} color="#AFBACA" />
                                 </Icon>
