@@ -1,9 +1,11 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { BiHome } from "react-icons/bi";
 import { api } from "../Shared/SharedFetchApi";
 import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle, Divider, Empty, EmptyImage, EmptyTitle, Pagination, PaginationItem, PaginationList, PaginationNavigator, Spinner } from "keep-react";
 import { CaretLeft, CaretRight } from "phosphor-react";
+import { SearchContext } from "../../Providers/SearchProvider";
+import { Link } from "react-router-dom";
 
 const AllProduct = () => {
 
@@ -12,7 +14,8 @@ const AllProduct = () => {
     const [filteredProducts, setFilteredProducts] = useState([])
     const [loading, setLoading] = useState(true);
     const [numberOfProduct, setNumberOfProduct] = useState(0);
-    const [brandName, setBrandName] = useState("")
+    const [brandName, setBrandName] = useState("");
+    const { searchTerm } = useContext(SearchContext);
 
 
     const [currentPage, setCurrentPage] = useState(0);
@@ -45,7 +48,15 @@ const AllProduct = () => {
                 console.error(error);
                 setLoading(false);
             })
-    }, [currentPage, productsPerPage])
+    }, [currentPage, productsPerPage]);
+
+    // filter product by searching
+    useEffect(() => {
+        const SearchedProduct = products.filter(product =>
+            product.name.toLowerCase().includes(searchTerm.toLowerCase()) || product.description.toLowerCase().includes(searchTerm)
+        );
+        setFilteredProducts(SearchedProduct);
+    }, [products, searchTerm])
 
     // show product category wise
     const handleCategoryClick = async (slug, name) => {
@@ -75,7 +86,7 @@ const AllProduct = () => {
         </div>
     }
 
-// todo: pagination need to be fixed properly
+    // todo: pagination need to be fixed properly
 
 
     // show all the product in the all button
@@ -118,9 +129,9 @@ const AllProduct = () => {
     console.log("pages : ", pages);
 
     /**
-     * todo : get total number of product
-     * todo : items per page
-     * todo : get the current page
+     * done : get total number of product
+     * done : items per page
+     * done : get the current page
      */
     return (
         <div className="mx-5 md:mx-10">
@@ -183,7 +194,7 @@ const AllProduct = () => {
                             {
                                 filteredProducts.map(product => (
                                     <div className="mx-auto" key={product._id}>
-                                        <Card className="h-full flex flex-col">
+                                        <Card className="h-full flex flex-col hover:shadow-xl">
                                             <CardHeader className="mt-5">
                                                 <img
                                                     className="w-2/3 mx-auto"
@@ -191,8 +202,10 @@ const AllProduct = () => {
                                             </CardHeader>
                                             <CardContent className="space-y-3 flex-grow">
                                                 {/* todo make it interactive */}
-                                                <h3 className="text-xs text-slate-500">Apple</h3>
-                                                <CardTitle className="text-lg font-semibold">{product.name}</CardTitle>
+                                                <h3 className="text-xs text-slate-500">{product.brand}</h3>
+                                                <Link to={`/products/${product._id}`}>
+                                                    <CardTitle className="text-lg font-semibold hover:underline">{product.name}</CardTitle>
+                                                </Link>
                                                 <CardDescription>
 
                                                     <li className="text-sm">Lorem ipsum dolor sit amet.</li>

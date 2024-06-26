@@ -45,27 +45,6 @@ const Register = () => {
         //     console.log(res.data);
     }
 
-    // const handleRegister = e => {
-    //     e.preventDefault();
-    //     const form = e.target;
-    //     const name = form.name.value;
-    //     const email = form.email.value;
-    //     const password = form.password.value;
-    //     const confirmPassword = form.confirmPassword.value;
-    //     const address = form.address.value;
-    //     const phone = form.phone.value;
-
-    // const user = {
-    //     name: name,
-    //     email: email,
-    //     password: password,
-    //     address: address,
-    //     phone: phone,
-    //     //image: 
-    // }
-    // console.log(user);
-    //}
-
     // Watch password value to validate confirm password
     const password = watch('password');
     return (

@@ -1,10 +1,11 @@
 /* eslint-disable react/no-unescaped-entities */
 import { Envelope, Eye, EyeSlash, FacebookLogo, GoogleLogo, Lock } from 'phosphor-react'
-import { Button, Card, Divider, Input, Label } from 'keep-react'
+import { Button, Card, Divider, Input, InputIcon, Label } from 'keep-react'
 import { NavLink } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { useContext, useState } from 'react';
 import { AuthContext } from '../../Providers/AuthProvider';
+import Swal from 'sweetalert2';
 
 const Login = () => {
 
@@ -23,9 +24,14 @@ const Login = () => {
         const password = form.password.value;
         console.log(email, password);
         signIn(email, password)
-            .then(res => {
-                console.log(res.user);
-            })
+            .then(
+                res =>{
+                    console.log(res.data);
+                }
+            )
+            .catch(error =>
+                console.error(error)
+            )
     }
     return (
         <div className='flex justify-center mt-10 mb-20'>
@@ -45,7 +51,9 @@ const Login = () => {
                                     className='ps-11'
                                     name='email'
                                     required />
-                                <Envelope size={19} color="#AFBACA" />
+                                <InputIcon>
+                                    <Envelope size={19} color="#AFBACA" />
+                                </InputIcon>
                             </div>
                         </fieldset>
                         <fieldset className="space-y-1">
@@ -64,9 +72,12 @@ const Login = () => {
                                     {passwordVisible ? <EyeSlash /> : <Eye />}
 
                                 </button>
-                                <Icon>
+
+                                <InputIcon>
                                     <Lock size={19} color="#AFBACA" />
-                                </Icon>
+                                </InputIcon>
+
+
                             </div>
                         </fieldset>
                         <NavLink>
