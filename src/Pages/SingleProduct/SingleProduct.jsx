@@ -15,7 +15,7 @@ const SingleProduct = () => {
     const productData = useLoaderData();
     const [number, setNumber] = useState(0);
 
-    const product = productData.payload.product;
+    const product = productData;
     console.log(product);
     return (
         <div className='mx-5'>

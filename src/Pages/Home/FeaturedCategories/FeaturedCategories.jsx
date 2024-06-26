@@ -8,10 +8,10 @@ const FeaturedCategories = () => {
     const [category, setCategory] = useState([]);
 
     useEffect(() => {
-        fetch(`${api}categories/`)
+        fetch(`${api}categories`)
             .then(res => res.json())
             .then(data => {
-                setCategory(data.payload)
+                setCategory(data)
             })
     }
         , [])

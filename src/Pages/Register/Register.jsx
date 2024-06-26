@@ -1,22 +1,30 @@
 import { useForm } from "react-hook-form";
 import { Eye, EyeSlash, FacebookLogo, GoogleLogo } from 'phosphor-react'
 import { Button, Card, Divider, Input, Label } from 'keep-react'
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { useContext, useState } from "react";
 import { AuthContext } from "../../Providers/AuthProvider";
-//import useAxiosPublic from "../../Hooks/useAxiosPublic";
+import useAxiosPublic from "../../Hooks/useAxiosPublic";
+import useAxiosSecure from "../../Hooks/userAxiosSecure";
+import Swal from "sweetalert2";
 
 
 // img hosting imgbb
-//const image_hosting_key = import.meta.env.VITE_IMAGE_HOSTING_KEY;
-//const image_hosting_api = `https://api.imgbb.com/1/upload?key=${image_hosting_key}`;
+const image_hosting_key = import.meta.env.VITE_IMAGE_HOSTING_KEY;
+const image_hosting_api = `https://api.imgbb.com/1/upload?key=${image_hosting_key}`;
 
 const Register = () => {
-    const { register, handleSubmit, formState: { errors }, watch } = useForm();
+    const { register, handleSubmit, formState: { errors }, watch, reset } = useForm();
     const [passwordVisible, setPasswordVisible] = useState(false);
     const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
     const { createUser } = useContext(AuthContext);
+
+
+
+    const axiosPublic = useAxiosPublic();
+    const axiosSecure = useAxiosSecure();
+    const navigate = useNavigate();
 
     // password visibility functionalities
     const handlePasswordVisible = () => {
@@ -27,22 +35,62 @@ const Register = () => {
         setConfirmPasswordVisible(!confirmPasswordVisible)
     }
 
-    const onSubmit = (data) => {
+    const onSubmit = async (data) => {
         console.log(data);
 
-        createUser(data.email, data.password)
-            .then(res => {
-                console.log(res.user);
-            })
+        //upload image into imgbb and then ger the url
+        const imageFile = { image: data.image[0] }
+        const res = await axiosPublic.post(image_hosting_api, imageFile, {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        })
+        // if image hosting successful and bring back the link
+        if (res.data.success) {
+            const image_url = res.data.data.display_url;
+            console.log(image_url);
+            createUser(data.email, data.password)
+                .then(res => {
+                    const userInfo = {
+                        name: data.name,
+                        email: data.email,
+                        password: data.password,
+                        address: data.phone,
+                        phone: data.phone,
+                        image: image_url,
 
-        // upload image into imgbb and then ger the url
-        //     const imageFile = { image: data.image[0] }
-        //     const res = await axiosPublic.post(image_hosting_key, imageFile, {
-        //         headers: {
-        //             'Content-Type': 'multipart/form-data'
-        //         }
-        //     })
-        //     console.log(res.data);
+                    }
+                    console.log(userInfo.image);
+                    axiosPublic.post('/users', userInfo)
+                        .then(res => {
+                            // console.log(res);
+                            if (res.data.insertedId) {
+                                reset();
+                                Swal.fire("Account has been created.");
+                                navigate('/');
+                            }
+                        })
+                        .catch(error => {
+                            console.error(error);
+                            const errorCode = error.code;
+                            const errorMessage = error.message;
+
+                            //console.log(errorCode, errorMessage);
+
+                            if (errorCode === 'auth/email-already-in-use') {
+                                Swal.fire('Error', 'Email is already in use.', 'error');
+                            } else if (errorCode === 'auth/invalid-email') {
+                                Swal.fire('Error', 'Invalid email address.', 'error');
+                            } else if (errorCode === 'auth/weak-password') {
+                                Swal.fire('Error', 'Password is too weak. It should be at least 6 characters.', 'error');
+                            } else {
+                                Swal.fire('Error', 'An error occurred during registration.', 'error');
+                            }
+                        })
+
+                })
+        }
+        console.log(res.data);
     }
 
     // Watch password value to validate confirm password

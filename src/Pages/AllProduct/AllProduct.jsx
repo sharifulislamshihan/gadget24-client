@@ -19,25 +19,30 @@ const AllProduct = () => {
 
 
     const [currentPage, setCurrentPage] = useState(0);
-    //const [productsPerPage, setProductsPerPage] = useState(20);
-    const productsPerPage = 15;
+    const [productsPerPage, setProductsPerPage] = useState(10);
 
     useEffect(() => {
         // fetching category
-        axios.get(`${api}categories/`)
+        axios.get(`${api}categories`)
             .then(res => {
-                setCategories(res.data.payload);
+                setCategories(res.data);
             })
             .catch(err => console.log(err));
 
-
+        axios.get(`${api}products`)
+            .then(res => {
+                const product = res.data.length;
+                //console.log(product);
+                setNumberOfProduct(product);
+                console.log("number of product", numberOfProduct);
+            })
 
         // fetching Products
         axios.get(`${api}products?page=${currentPage}&size=${productsPerPage}`)
             .then(res => {
-                const products = res.data.payload.products;
-                const numberOfProduct = res.data.payload.totalNumberOfProducts;
-                setNumberOfProduct(numberOfProduct);
+                const products = res.data;
+                //console.log(products);
+                //console.log('number of product', products.length);
                 setProducts(products);
                 setFilteredProducts(products);
                 setLoading(false);
@@ -60,14 +65,14 @@ const AllProduct = () => {
 
     // show product category wise
     const handleCategoryClick = async (slug, name) => {
-        console.log(slug);
+        //console.log(slug);
         setLoading(true);
         try {
             //filter product as the category clicked
             const filtered = products.filter(product => product.category === slug);
             setBrandName(name);
             setFilteredProducts(filtered);
-            setNumberOfProduct(filteredProducts.length)
+            //setNumberOfProduct(filteredProducts.length)
         }
         catch (error) {
             console.error(error);
@@ -102,11 +107,11 @@ const AllProduct = () => {
     }
 
     // handle product per page
-    // const handleItemsPerPageChange = e => {
-    //     const val = parseInt(e.target.value)
-    //     setProductsPerPage(val);
-    //     setCurrentPage(0);
-    // }
+    const handleItemsPerPageChange = e => {
+        const val = parseInt(e.target.value)
+        setProductsPerPage(val);
+        setCurrentPage(0);
+    }
 
     // handle previous page in the pagination
     const handlePreviousPage = () => {
@@ -123,10 +128,10 @@ const AllProduct = () => {
     }
 
     const totalProduct = numberOfProduct;
-    console.log(totalProduct);
+    //console.log("total product", totalProduct);
     const numberOfPages = Math.ceil(totalProduct / productsPerPage);
     const pages = [...Array(numberOfPages).keys()];
-    console.log("pages : ", pages);
+    //console.log("pages : ", pages);
 
     /**
      * done : get total number of product
@@ -172,7 +177,7 @@ const AllProduct = () => {
 
             {/* drop down menu for pagination */}
 
-            {/* <div className="flex my-10">
+            <div className="flex my-10">
                 <h3>Show : </h3>
                 <select value={productsPerPage}
                     onChange={handleItemsPerPageChange}
@@ -182,7 +187,7 @@ const AllProduct = () => {
                     <option value="20">20</option>
                     <option value="50">50</option>
                 </select>
-            </div> */}
+            </div>
 
 
 
