@@ -1,11 +1,12 @@
 /* eslint-disable react/no-unescaped-entities */
 import { Envelope, Eye, EyeSlash, FacebookLogo, GoogleLogo, Lock } from 'phosphor-react'
 import { Button, Card, Divider, Input, InputIcon, Label } from 'keep-react'
-import { NavLink } from 'react-router-dom';
+import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { useContext, useState } from 'react';
 import { AuthContext } from '../../Providers/AuthProvider';
 import Swal from 'sweetalert2';
+import { GoogleAuthProvider } from 'firebase/auth';
 
 const Login = () => {
 
@@ -15,7 +16,12 @@ const Login = () => {
         setPasswordVisible(!passwordVisible)
     }
 
-    const { signIn } = useContext(AuthContext)
+    const navigate = useNavigate();
+    const location = useLocation();
+
+    const from = location.state?.from?.pathname || "/";
+
+    const { signIn, signInWithGoogle } = useContext(AuthContext);
 
     const handleLogin = e => {
         e.preventDefault();
@@ -24,15 +30,136 @@ const Login = () => {
         const password = form.password.value;
         console.log(email, password);
         signIn(email, password)
-            .then(
-                res =>{
-                    console.log(res.data);
+            .then(res => {
+                res.user
+                const Toast = Swal.mixin({
+                    toast: true,
+                    position: "top-end",
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true,
+                    didOpen: (toast) => {
+                        toast.onmouseenter = Swal.stopTimer;
+                        toast.onmouseleave = Swal.resumeTimer;
+                    }
+                });
+                Toast.fire({
+                    icon: "success",
+                    title: "Signed in successfully"
+                });
+
+
+                // Navigate after location
+                navigate(from, { replace: true });
+
+            })
+            .catch(error => {
+                // toast.error(error.message, { position: "top-right" });
+                if (error.code === 'auth/invalid-email') {
+
+                    const Toast = Swal.mixin({
+                        toast: true,
+                        position: "top-end",
+                        showConfirmButton: false,
+                        timer: 3000,
+                        timerProgressBar: true,
+                        didOpen: (toast) => {
+                            toast.onmouseenter = Swal.stopTimer;
+                            toast.onmouseleave = Swal.resumeTimer;
+                        }
+                    });
+                    Toast.fire({
+                        icon: "error",
+                        title: "Invalid email."
+                    });
+
                 }
-            )
-            .catch(error =>
-                console.error(error)
-            )
+                else if (error.code === 'auth/wrong-password') {
+
+                    const Toast = Swal.mixin({
+                        toast: true,
+                        position: "top-end",
+                        showConfirmButton: false,
+                        timer: 3000,
+                        timerProgressBar: true,
+                        didOpen: (toast) => {
+                            toast.onmouseenter = Swal.stopTimer;
+                            toast.onmouseleave = Swal.resumeTimer;
+                        }
+                    });
+                    Toast.fire({
+                        icon: "error",
+                        title: "Invalid password."
+                    });
+
+                }
+                else {
+
+                    const Toast = Swal.mixin({
+                        toast: true,
+                        position: "top-end",
+                        showConfirmButton: false,
+                        timer: 3000,
+                        timerProgressBar: true,
+                        didOpen: (toast) => {
+                            toast.onmouseenter = Swal.stopTimer;
+                            toast.onmouseleave = Swal.resumeTimer;
+                        }
+                    });
+                    Toast.fire({
+                        icon: "error",
+                        title: "Invalid email or password."
+                    });
+                }
+                //console.log(error);
+            })
     }
+
+
+    // handle login using direct email
+
+    const handleGoogleSignIn = () => {
+        signInWithGoogle()
+            .then(res => {
+                res.user
+                const Toast = Swal.mixin({
+                    toast: true,
+                    position: "top-end",
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true,
+                    didOpen: (toast) => {
+                        toast.onmouseenter = Swal.stopTimer;
+                        toast.onmouseleave = Swal.resumeTimer;
+                    }
+                });
+                Toast.fire({
+                    icon: "success",
+                    title: "Signed in successfully"
+                });
+                //Navigate after location
+                navigate(from, { replace: true });
+            })
+            .catch(error => {
+                const Toast = Swal.mixin({
+                    toast: true,
+                    position: "top-end",
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true,
+                    didOpen: (toast) => {
+                        toast.onmouseenter = Swal.stopTimer;
+                        toast.onmouseleave = Swal.resumeTimer;
+                    }
+                });
+                Toast.fire({
+                    icon: "error",
+                    title: "Something went wrong. Try again!"
+                });
+
+            })
+    }
+
     return (
         <div className='flex justify-center mt-10 mb-20'>
             <Helmet>
@@ -90,7 +217,7 @@ const Login = () => {
                     <h3 className='text-sm'>Don't have any account? <NavLink to='/register' className='underline text-blue-500 '>Create an account</NavLink></h3>
                     <Divider>Or</Divider>
                     <div className="flex items-center justify-between gap-3">
-                        <Button size="xs" variant="outline" color="secondary" className="w-full">
+                        <Button onClick={handleGoogleSignIn} size="xs" variant="outline" color="secondary" className="w-full">
                             <GoogleLogo size={20} className="mr-1.5" />
                             Google
                         </Button>

@@ -2,10 +2,9 @@
 // import { MagnifyingGlass, ShoppingCart, User } from "phosphor-react";
 // import { Navbar, NavbarCollapse, NavbarCollapseBtn, NavbarItem } from "keep-react";
 // import { Input } from 'keep-react'
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import {
     Avatar,
-    Button,
     Dropdown,
     DropdownAction,
     DropdownContent,
@@ -18,13 +17,13 @@ import {
     NavbarCollapse,
     NavbarCollapseBtn,
     NavbarContainer,
-    NavbarItem,
     NavbarList,
 } from 'keep-react'
 import { ShoppingCart, User } from "phosphor-react";
 import { BiSearch } from "react-icons/bi";
 import { useContext } from "react";
 import { SearchContext } from "../../Providers/SearchProvider";
+import { AuthContext } from "../../Providers/AuthProvider";
 
 
 // import DarkModeButton from './DarkModeButton';
@@ -32,11 +31,24 @@ import { SearchContext } from "../../Providers/SearchProvider";
 
 
 const Header = () => {
+
     const { searchTerm, setSearchTerm } = useContext(SearchContext);
+    const { user, logOut } = useContext(AuthContext);
+    const navigate = useNavigate();
 
     const handleSearch = e => {
         setSearchTerm(e.target.value);
         console.log("Searching for : ", searchTerm);
+    }
+    console.log("user", user);
+
+    // handle logout
+    const handleLogOut = () => {
+        logOut()
+            .then(() => {
+                navigate("/");
+            })
+            .catch(error => console.error(error))
     }
 
     return (
@@ -97,9 +109,31 @@ const Header = () => {
                                 </ShoppingCart>
                             </NavLink>
 
-                            <NavLink to='/login' className='hidden md:block'>
-                                <User size={20} color="#444" />
-                            </NavLink>
+                            {
+                                user
+                                    ? (
+                                        <Dropdown placement="bottom-end">
+                                            <DropdownAction asChild>
+                                                <Avatar size="lg" shape="circle" img="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png" />
+                                            </DropdownAction>
+                                            <DropdownContent>
+                                                <DropdownList>
+                                                    <DropdownItem>Statistics</DropdownItem>
+                                                    <DropdownItem>Duplicate</DropdownItem>
+                                                    <DropdownItem>Account</DropdownItem>
+                                                    <DropdownItem
+                                                        onClick={handleLogOut}>Logout</DropdownItem>
+                                                </DropdownList>
+                                            </DropdownContent>
+                                        </Dropdown>
+                                    )
+                                    : (
+                                        <NavLink to='/login' className='hidden md:block'>
+                                            <User size={20} color="#444" />
+                                        </NavLink>
+                                    )
+                            }
+
                         </div>
 
                     </div>

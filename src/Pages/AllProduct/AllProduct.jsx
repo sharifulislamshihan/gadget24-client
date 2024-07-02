@@ -5,21 +5,30 @@ import { api } from "../Shared/SharedFetchApi";
 import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle, Divider, Empty, EmptyImage, EmptyTitle, Pagination, PaginationItem, PaginationList, PaginationNavigator, Spinner } from "keep-react";
 import { CaretLeft, CaretRight } from "phosphor-react";
 import { SearchContext } from "../../Providers/SearchProvider";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { AuthContext } from "../../Providers/AuthProvider";
+import Swal from "sweetalert2";
+import useCart from "../../Hooks/useCart";
+import { Helmet } from "react-helmet-async";
 
 const AllProduct = () => {
 
     const [categories, setCategories] = useState([]);
     const [products, setProducts] = useState([]);
-    const [filteredProducts, setFilteredProducts] = useState([])
     const [loading, setLoading] = useState(true);
-    const [numberOfProduct, setNumberOfProduct] = useState(0);
-    const [brandName, setBrandName] = useState("");
+    const [page, setPage] = useState(0);
+    const [size, setSize] = useState(10);
+    const [totalPages, setTotalPages] = useState(0);
+    const [totalProducts, setTotalProducts] = useState(0);
+    const [selectedBrand, setSelectedBrand] = useState('');
     const { searchTerm } = useContext(SearchContext);
 
 
-    const [currentPage, setCurrentPage] = useState(0);
-    const [productsPerPage, setProductsPerPage] = useState(10);
+    const { user } = useContext(AuthContext);
+    const [refetch] = useCart();
+
+    const navigate = useNavigate()
+    const location = useLocation();
 
     useEffect(() => {
         // fetching category
@@ -28,58 +37,37 @@ const AllProduct = () => {
                 setCategories(res.data);
             })
             .catch(err => console.log(err));
+    }, []);
 
-        axios.get(`${api}products`)
-            .then(res => {
-                const product = res.data.length;
-                //console.log(product);
-                setNumberOfProduct(product);
-                console.log("number of product", numberOfProduct);
-            })
-
-        // fetching Products
-        axios.get(`${api}products?page=${currentPage}&size=${productsPerPage}`)
-            .then(res => {
-                const products = res.data;
-                //console.log(products);
-                //console.log('number of product', products.length);
-                setProducts(products);
-                setFilteredProducts(products);
-                setLoading(false);
-                // console.log(products);
-            })
-
-            .catch(error => {
-                console.error(error);
-                setLoading(false);
-            })
-    }, [currentPage, productsPerPage]);
-
-    // filter product by searching
     useEffect(() => {
-        const SearchedProduct = products.filter(product =>
-            product.name.toLowerCase().includes(searchTerm.toLowerCase()) || product.description.toLowerCase().includes(searchTerm)
-        );
-        setFilteredProducts(SearchedProduct);
-    }, [products, searchTerm])
+
+        const fetchProducts = async () => {
+            setLoading(true);
+            const response = await axios.get(`${api}products`, {
+                params: {
+                    page,
+                    size,
+                    brand: selectedBrand
+                }
+            });
+            setProducts(response.data.result);
+            setTotalPages(response.data.totalPages);
+            setTotalProducts(response.data.totalProducts);
+            setLoading(false);
+        };
+
+        fetchProducts();
+    }, [page, selectedBrand, size])
+
+
+    console.log(products);
 
     // show product category wise
-    const handleCategoryClick = async (slug, name) => {
-        //console.log(slug);
+    const handleCategoryClick = async (name) => {
+        console.log(name);
         setLoading(true);
-        try {
-            //filter product as the category clicked
-            const filtered = products.filter(product => product.category === slug);
-            setBrandName(name);
-            setFilteredProducts(filtered);
-            //setNumberOfProduct(filteredProducts.length)
-        }
-        catch (error) {
-            console.error(error);
-        }
-        finally {
-            setLoading(false);
-        }
+        setSelectedBrand(name);
+        setPage(0);
     };
 
     if (loading) {
@@ -91,58 +79,80 @@ const AllProduct = () => {
         </div>
     }
 
-    // todo: pagination need to be fixed properly
-
-
     // show all the product in the all button
     const handleShowAllProduct = () => {
-        setFilteredProducts(products);
-        setBrandName('');
+        setSelectedBrand('');
     };
 
-
     // add to cart
-    const handleAddToCart = (_id) => {
-        console.log(_id);
+    const handleAddToCart = product => {
+        if (!user) {
+            navigate('/login', { state: { from: location } });
+        }
+        else {
+            console.log(product);
+            if (user && user.email) {
+                const productCartItem = {
+                    productCart: product._id,
+                    email: user.email,
+                    name: product.name,
+                    price: product.price,
+                    quantity: 1,
+                }
+                axios.post(`${api}carts`, productCartItem)
+                    .then(res => {
+                        if (res.data.insertedId) {
+                            Swal.fire({
+                                position: "top-end",
+                                icon: "success",
+                                title: `${product.name} added to cart..`,
+                                showConfirmButton: false,
+                                timer: 1500
+                            });
+                            // refetch the cart
+                            refetch();
+
+                        }
+                    })
+            }
+        }
+
     }
 
     // handle product per page
-    const handleItemsPerPageChange = e => {
-        const val = parseInt(e.target.value)
-        setProductsPerPage(val);
-        setCurrentPage(0);
+    const handleItemsPerPageChange = (e) => {
+        setSize(parseInt(e.target.value));
+        setPage(0);
     }
+
+    // Handle pagination
+    const handlePageChange = (newPage) => {
+        setPage(newPage);
+    };
+
 
     // handle previous page in the pagination
     const handlePreviousPage = () => {
-        if (currentPage > 0) {
-            setCurrentPage(currentPage - 1)
+        if (page > 0) {
+            setPage(page - 1);
         }
     }
 
     // handle next page in the pagination
     const handleNextPage = () => {
-        if (currentPage < pages.length - 1) {
-            setCurrentPage(currentPage + 1);
+        if (page < totalPages - 1) {
+            setPage(page + 1);
         }
     }
-
-    const totalProduct = numberOfProduct;
-    //console.log("total product", totalProduct);
-    const numberOfPages = Math.ceil(totalProduct / productsPerPage);
-    const pages = [...Array(numberOfPages).keys()];
-    //console.log("pages : ", pages);
-
-    /**
-     * done : get total number of product
-     * done : items per page
-     * done : get the current page
-     */
+    
     return (
         <div className="mx-5 md:mx-10">
+            <Helmet>
+                <title>Product - Gadget24</title>
+            </Helmet>
             <div className="flex justify-center md:justify-start">
                 <BiHome className="text-xl" />
-                <h2>/ Products /{brandName}</h2>
+                <h2>/ Products /</h2>
             </div>
 
             <div className="my-10">
@@ -167,7 +177,7 @@ const AllProduct = () => {
                             className="rounded-xl"
                             color="secondary"
                             variant="outline"
-                            onClick={() => handleCategoryClick(category.slug, category.name)}
+                            onClick={() => handleCategoryClick(category.name)}
                             key={category._id}
 
                         >{category.name}</Button>
@@ -179,7 +189,7 @@ const AllProduct = () => {
 
             <div className="flex my-10">
                 <h3>Show : </h3>
-                <select value={productsPerPage}
+                <select value={size}
                     onChange={handleItemsPerPageChange}
                     name=""
                     id="">
@@ -194,10 +204,10 @@ const AllProduct = () => {
             {/* products */}
             <div className="my-12">
                 {
-                    filteredProducts.length > 0 ? (
+                    products.length > 0 ? (
                         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4">
                             {
-                                filteredProducts.map(product => (
+                                products.map(product => (
                                     <div className="mx-auto" key={product._id}>
                                         <Card className="h-full flex flex-col hover:shadow-xl">
                                             <CardHeader className="mt-5">
@@ -230,7 +240,7 @@ const AllProduct = () => {
                                                     size="sm" color="secondary"
                                                     className="w-3/4 hover:bg-slate-500 hover:text-white"
                                                     variant="outline"
-                                                    onClick={() => handleAddToCart(product._id)}
+                                                    onClick={() => handleAddToCart(product)}
                                                 >
                                                     Add to Cart
                                                 </Button>
@@ -276,14 +286,15 @@ const AllProduct = () => {
                 </PaginationNavigator>
                 <PaginationList>
                     {
-                        pages.map(page =>
+                        [...Array(totalPages).keys()].map(pageNum => (
                             <PaginationItem
-                                className={currentPage === page && 'bg-black text-white hover:bg-black hover:text-white'}
-                                onClick={() => setCurrentPage(page)}
-                                key={page}
-                            >{page + 1}</PaginationItem>
-                        )
-                    }
+                                key={pageNum}
+                                className={page === pageNum ? 'bg-black text-white' : ''}
+                                onClick={() => handlePageChange(pageNum)}
+                            >
+                                {pageNum + 1}
+                            </PaginationItem>
+                        ))}
                 </PaginationList>
 
                 {/* next button */}

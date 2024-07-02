@@ -6,6 +6,9 @@ import Register from "../Pages/Register/Register";
 import AllProduct from "../Pages/AllProduct/AllProduct";
 import SingleProduct from "../Pages/SingleProduct/SingleProduct";
 import { api } from "../Pages/Shared/SharedFetchApi";
+import PrivateRoutes from "./PrivateRoutes";
+import Dashboard from "../Layout/Dashboard";
+import ErrorPage from "../Pages/ErrorPage/ErrorPage";
 
 export const router = createBrowserRouter([
     {
@@ -32,7 +35,18 @@ export const router = createBrowserRouter([
             {
                 path: "/register",
                 element: <Register></Register>
+            },
+            {
+                path: "*",
+                element: <ErrorPage></ErrorPage>
             }
         ]
-    }
+    },
+    // {
+    //     path: 'dashboard',
+    //     element: <PrivateRoutes><Dashboard></Dashboard></PrivateRoutes>,
+    //     children: [
+            
+    //     ]
+    // }
 ])

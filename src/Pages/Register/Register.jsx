@@ -6,7 +6,6 @@ import { Helmet } from 'react-helmet-async';
 import { useContext, useState } from "react";
 import { AuthContext } from "../../Providers/AuthProvider";
 import useAxiosPublic from "../../Hooks/useAxiosPublic";
-import useAxiosSecure from "../../Hooks/userAxiosSecure";
 import Swal from "sweetalert2";
 
 
@@ -18,12 +17,11 @@ const Register = () => {
     const { register, handleSubmit, formState: { errors }, watch, reset } = useForm();
     const [passwordVisible, setPasswordVisible] = useState(false);
     const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
-    const { createUser } = useContext(AuthContext);
+    const { createUser, signInWithGoogle } = useContext(AuthContext);
 
 
 
     const axiosPublic = useAxiosPublic();
-    const axiosSecure = useAxiosSecure();
     const navigate = useNavigate();
 
     // password visibility functionalities
@@ -91,6 +89,62 @@ const Register = () => {
                 })
         }
         console.log(res.data);
+    }
+
+
+    // handle login using direct email
+
+    const handleGoogleSignIn = () => {
+        signInWithGoogle()
+            .then(res => {
+                res.user
+                // sending data to database who sign in using google
+                const userInfo = {
+                    name: res.user?.displayName,
+                    email: res.user?.email,
+                }
+                axiosPublic.post('/users', userInfo)
+                    .then(res => {
+                        //console.log(res.data);
+                        navigate('/');
+                    })
+                const Toast = Swal.mixin({
+                    toast: true,
+                    position: "top-end",
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true,
+                    didOpen: (toast) => {
+                        toast.onmouseenter = Swal.stopTimer;
+                        toast.onmouseleave = Swal.resumeTimer;
+                    }
+                });
+                Toast.fire({
+                    icon: "success",
+                    title: "Signed in successfully"
+                });
+                // Navigate after location
+                //navigate(from, { replace: true });
+            })
+            // eslint-disable-next-line no-unused-vars
+            .catch(error => {
+                const Toast = Swal.mixin({
+                    toast: true,
+                    position: "top-end",
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true,
+                    didOpen: (toast) => {
+                        toast.onmouseenter = Swal.stopTimer;
+                        toast.onmouseleave = Swal.resumeTimer;
+                    }
+                });
+                Toast.fire({
+                    icon: "error",
+                    title: "Something went wrong. Try again!"
+                });
+
+            })
     }
 
     // Watch password value to validate confirm password
@@ -249,7 +303,7 @@ const Register = () => {
                     <div className="flex items-center justify-between gap-3">
 
                         {/* google */}
-                        <Button size="xs" variant="outline" color="secondary" className="w-full">
+                        <Button onClick={handleGoogleSignIn} size="xs" variant="outline" color="secondary" className="w-full">
                             <GoogleLogo size={20} className="mr-1.5" />
                             Google
                         </Button>

@@ -1,22 +1,32 @@
 import { Badge, Button, Divider, Label, NumberInput, NumberInputBox, NumberInputButton, Radio, Tab, TabItem, TabList } from 'keep-react';
 import { Minus, Plus } from 'phosphor-react';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { BiHome } from 'react-icons/bi';
-import { useLoaderData } from 'react-router-dom';
+import { NavLink, useLoaderData, useLocation, useNavigate } from 'react-router-dom';
+import { AuthContext } from '../../Providers/AuthProvider';
 
 
-// add to cart
-const handleAddToCart = (_id) => {
-    console.log(_id);
-}
 
 const SingleProduct = () => {
 
     const productData = useLoaderData();
+    const { user } = useContext(AuthContext);
+    const navigate = useNavigate();
+    const location = useLocation()
     const [number, setNumber] = useState(0);
 
     const product = productData;
     console.log(product);
+
+    // add to cart
+    const handleAddToCart = (_id) =>{
+        if(!user){
+            navigate('/login', { state: { from: location } });
+        }
+        else{
+            console.log(_id);
+        }
+    }
     return (
         <div className='mx-5'>
             <div className="flex justify-center md:justify-start">
@@ -42,7 +52,10 @@ const SingleProduct = () => {
                             <p className='text-md text-slate-400'>{product.brand}</p>
                         </div>
                         <div>
-                            <Badge color="secondary">Secondary</Badge>
+                            <Badge color={
+                                product.quantity > 0 ?  'success' : 'error'
+
+                            }>{product.quantity > 0 ?  'In Stock' : 'Out of Stock'}</Badge>
                         </div>
                     </div>
                     <div className='my-3'>
