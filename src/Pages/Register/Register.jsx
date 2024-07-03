@@ -7,6 +7,7 @@ import { useContext, useState } from "react";
 import { AuthContext } from "../../Providers/AuthProvider";
 import useAxiosPublic from "../../Hooks/useAxiosPublic";
 import Swal from "sweetalert2";
+import { sendEmailVerification, signOut } from "firebase/auth";
 
 
 // img hosting imgbb
@@ -17,7 +18,7 @@ const Register = () => {
     const { register, handleSubmit, formState: { errors }, watch, reset } = useForm();
     const [passwordVisible, setPasswordVisible] = useState(false);
     const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
-    const { createUser, signInWithGoogle } = useContext(AuthContext);
+    const { createUser, signInWithGoogle, logOut } = useContext(AuthContext);
 
 
 
@@ -49,6 +50,8 @@ const Register = () => {
             console.log(image_url);
             createUser(data.email, data.password)
                 .then(res => {
+                    const user = res.user;
+                    console.log("user: ", res.user);
                     const userInfo = {
                         name: data.name,
                         email: data.email,
@@ -56,34 +59,42 @@ const Register = () => {
                         address: data.phone,
                         phone: data.phone,
                         image: image_url,
+                        //admin: false;
 
                     }
-                    console.log(userInfo.image);
-                    axiosPublic.post('/users', userInfo)
+                    sendEmailVerification(user)
                         .then(res => {
-                            // console.log(res);
-                            if (res.data.insertedId) {
-                                reset();
-                                Swal.fire("Account has been created.");
-                                navigate('/');
-                            }
+                            //console.log("email sent!!");
+                            Swal.fire("Please Check Your Email");
+                            axiosPublic.post('/users', userInfo)
+                                .then(res => {
+                                    // console.log(res);
+                                    if (res.data.insertedId) {
+                                        reset();
+                                        Swal.fire("Account has been created.");
+                                        navigate('/');
+                                    }
+                                })
+                                .catch(error => {
+                                    console.error(error);
+                                    const errorCode = error.code;
+                                    const errorMessage = error.message;
+
+                                    //console.log(errorCode, errorMessage);
+
+                                    if (errorCode === 'auth/email-already-in-use') {
+                                        Swal.fire('Error', 'Email is already in use.', 'error');
+                                    } else if (errorCode === 'auth/invalid-email') {
+                                        Swal.fire('Error', 'Invalid email address.', 'error');
+                                    } else if (errorCode === 'auth/weak-password') {
+                                        Swal.fire('Error', 'Password is too weak. It should be at least 6 characters.', 'error');
+                                    } else {
+                                        Swal.fire('Error', 'An error occurred during registration.', 'error');
+                                    }
+                                })
                         })
                         .catch(error => {
-                            console.error(error);
-                            const errorCode = error.code;
-                            const errorMessage = error.message;
-
-                            //console.log(errorCode, errorMessage);
-
-                            if (errorCode === 'auth/email-already-in-use') {
-                                Swal.fire('Error', 'Email is already in use.', 'error');
-                            } else if (errorCode === 'auth/invalid-email') {
-                                Swal.fire('Error', 'Invalid email address.', 'error');
-                            } else if (errorCode === 'auth/weak-password') {
-                                Swal.fire('Error', 'Password is too weak. It should be at least 6 characters.', 'error');
-                            } else {
-                                Swal.fire('Error', 'An error occurred during registration.', 'error');
-                            }
+                            console.error("error in verification", error);
                         })
 
                 })

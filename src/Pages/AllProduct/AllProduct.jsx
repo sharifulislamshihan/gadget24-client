@@ -4,7 +4,7 @@ import { BiHome } from "react-icons/bi";
 import { api } from "../Shared/SharedFetchApi";
 import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle, Divider, Empty, EmptyImage, EmptyTitle, Pagination, PaginationItem, PaginationList, PaginationNavigator, Spinner } from "keep-react";
 import { CaretLeft, CaretRight } from "phosphor-react";
-import { SearchContext } from "../../Providers/SearchProvider";
+// import { SearchContext } from "../../Providers/SearchProvider";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { AuthContext } from "../../Providers/AuthProvider";
 import Swal from "sweetalert2";
@@ -21,7 +21,6 @@ const AllProduct = () => {
     const [totalPages, setTotalPages] = useState(0);
     const [totalProducts, setTotalProducts] = useState(0);
     const [selectedBrand, setSelectedBrand] = useState('');
-    const { searchTerm } = useContext(SearchContext);
 
 
     const { user } = useContext(AuthContext);
@@ -82,6 +81,7 @@ const AllProduct = () => {
     // show all the product in the all button
     const handleShowAllProduct = () => {
         setSelectedBrand('');
+        setPage(0);
     };
 
     // add to cart
@@ -144,7 +144,7 @@ const AllProduct = () => {
             setPage(page + 1);
         }
     }
-    
+
     return (
         <div className="mx-5 md:mx-10">
             <Helmet>
@@ -152,7 +152,7 @@ const AllProduct = () => {
             </Helmet>
             <div className="flex justify-center md:justify-start">
                 <BiHome className="text-xl" />
-                <h2>/ Products /</h2>
+                <h2>/ Products / {selectedBrand}</h2>
             </div>
 
             <div className="my-10">
@@ -165,7 +165,7 @@ const AllProduct = () => {
             <div className="flex flex-wrap gap-3">
                 <Button
                     size="xs"
-                    className="rounded-xl"
+                    className={`rounded-xl ${selectedBrand === '' ? 'bg-black text-white border-black' : ''}`}
                     color="secondary"
                     variant="outline"
                     onClick={() => handleShowAllProduct()}
@@ -174,7 +174,7 @@ const AllProduct = () => {
                     categories.map(category => (
                         <Button
                             size="xs"
-                            className="rounded-xl"
+                            className={`rounded-xl ${selectedBrand === category.name ? 'bg-black text-white border-black' : ''}`}
                             color="secondary"
                             variant="outline"
                             onClick={() => handleCategoryClick(category.name)}
@@ -204,7 +204,7 @@ const AllProduct = () => {
             {/* products */}
             <div className="my-12">
                 {
-                    products.length > 0 ? (
+                    totalProducts > 0 ? (
                         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4">
                             {
                                 products.map(product => (
@@ -272,40 +272,44 @@ const AllProduct = () => {
             </div>
 
 
-            {/* Pagination */}
+            {
+                totalPages > 1 && (
+                    /* Pagination */
             <Pagination shape="circle" className="flex justify-center my-12">
 
-                {/* previous button */}
-                <PaginationNavigator
-                    className="hover:bg-slate-200"
-                    onClick={handlePreviousPage}
-                    shape="circle">
-                    <CaretLeft size={18}
-                        color="#0000FF"
-                    />
-                </PaginationNavigator>
-                <PaginationList>
-                    {
-                        [...Array(totalPages).keys()].map(pageNum => (
-                            <PaginationItem
-                                key={pageNum}
-                                className={page === pageNum ? 'bg-black text-white' : ''}
-                                onClick={() => handlePageChange(pageNum)}
-                            >
-                                {pageNum + 1}
-                            </PaginationItem>
-                        ))}
-                </PaginationList>
+            {/* previous button */}
+            <PaginationNavigator
+                className="hover:bg-slate-200"
+                onClick={handlePreviousPage}
+                shape="circle">
+                <CaretLeft size={18}
+                    color="#0000FF"
+                />
+            </PaginationNavigator>
+            <PaginationList>
+                {
+                    [...Array(totalPages).keys()].map(pageNum => (
+                        <PaginationItem
+                            key={pageNum}
+                            className={page === pageNum ? 'bg-black text-white' : ''}
+                            onClick={() => handlePageChange(pageNum)}
+                        >
+                            {pageNum + 1}
+                        </PaginationItem>
+                    ))}
+            </PaginationList>
 
-                {/* next button */}
-                <PaginationNavigator
-                    className="hover:bg-slate-200"
-                    onClick={handleNextPage}
-                    shape="circle">
-                    <CaretRight size={18}
-                        color="#0000FF" />
-                </PaginationNavigator>
-            </Pagination>
+            {/* next button */}
+            <PaginationNavigator
+                className="hover:bg-slate-200"
+                onClick={handleNextPage}
+                shape="circle">
+                <CaretRight size={18}
+                    color="#0000FF" />
+            </PaginationNavigator>
+        </Pagination>
+                )
+            }
         </div>
     );
 };

@@ -6,7 +6,6 @@ import { Helmet } from 'react-helmet-async';
 import { useContext, useState } from 'react';
 import { AuthContext } from '../../Providers/AuthProvider';
 import Swal from 'sweetalert2';
-import { GoogleAuthProvider } from 'firebase/auth';
 
 const Login = () => {
 
@@ -31,26 +30,36 @@ const Login = () => {
         console.log(email, password);
         signIn(email, password)
             .then(res => {
-                res.user
-                const Toast = Swal.mixin({
-                    toast: true,
-                    position: "top-end",
-                    showConfirmButton: false,
-                    timer: 3000,
-                    timerProgressBar: true,
-                    didOpen: (toast) => {
-                        toast.onmouseenter = Swal.stopTimer;
-                        toast.onmouseleave = Swal.resumeTimer;
-                    }
-                });
-                Toast.fire({
-                    icon: "success",
-                    title: "Signed in successfully"
-                });
+                console.log(res.user.emailVerified);
+                if (res.user.emailVerified) {
+                    const Toast = Swal.mixin({
+                        toast: true,
+                        position: "top-end",
+                        showConfirmButton: false,
+                        timer: 3000,
+                        timerProgressBar: true,
+                        didOpen: (toast) => {
+                            toast.onmouseenter = Swal.stopTimer;
+                            toast.onmouseleave = Swal.resumeTimer;
+                        }
+                    });
+                    Toast.fire({
+                        icon: "success",
+                        title: "Signed in successfully"
+                    });
 
 
-                // Navigate after location
-                navigate(from, { replace: true });
+                    // Navigate after location
+                    navigate(from, { replace: true });
+                }
+                else {
+                    Swal.fire({
+                        icon: "error",
+                        title: "Oops...",
+                        text: "Complete Your Registration",
+                    });
+                }
+                form.reset();
 
             })
             .catch(error => {

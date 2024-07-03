@@ -3,11 +3,14 @@ import { createUserWithEmailAndPassword, getAuth, onAuthStateChanged, signInWith
 
 import { createContext, useEffect, useState } from "react";
 import { app } from "../Firebase/Firebase.config";
-import { GoogleAuthProvider } from "firebase/auth/web-extension";
+import { GoogleAuthProvider } from "firebase/auth";
+
 
 export const AuthContext = createContext(null);
-export const googleProvider = new GoogleAuthProvider();
+export const GoogleProvider = new GoogleAuthProvider();
+
 const auth = getAuth(app);
+
 const AuthProvider = ({ children }) => {
 
     const [user, setUser] = useState(null);
@@ -34,7 +37,7 @@ const AuthProvider = ({ children }) => {
     // login with google
     const signInWithGoogle = () => {
         setLoading(true);
-        return signInWithPopup(auth, googleProvider)
+        return signInWithPopup(auth, GoogleProvider)
     }
 
 
@@ -47,8 +50,15 @@ const AuthProvider = ({ children }) => {
 
 
     useEffect(() => {
-        const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-            setUser(currentUser);
+        const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+            setLoading(true);
+            if (currentUser) {
+                await currentUser.reload();
+                if (currentUser.emailVerified) {
+                    setUser(currentUser);
+                }
+            }
+            //setUser(currentUser);
             console.log('current User', currentUser);
             setLoading(false);
         });
@@ -65,7 +75,7 @@ const AuthProvider = ({ children }) => {
         signIn,
         logOut,
         signInWithGoogle,
-        updateUserProfile,
+        updateUserProfile
     }
 
     return (
