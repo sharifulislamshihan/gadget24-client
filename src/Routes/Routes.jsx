@@ -7,8 +7,9 @@ import AllProduct from "../Pages/AllProduct/AllProduct";
 import SingleProduct from "../Pages/SingleProduct/SingleProduct";
 import { api } from "../Pages/Shared/SharedFetchApi";
 import PrivateRoutes from "./PrivateRoutes";
-import Dashboard from "../Layout/Dashboard";
 import ErrorPage from "../Pages/ErrorPage/ErrorPage";
+import UserProfile from "../Pages/UserProfile/UserProfile";
+import Cart from "../Pages/Cart/Cart";
 
 export const router = createBrowserRouter([
     {
@@ -35,6 +36,14 @@ export const router = createBrowserRouter([
             {
                 path: "/register",
                 element: <Register></Register>
+            },
+            {
+                path: "/user",
+                element: <UserProfile></UserProfile>
+            },
+            {
+                path: "/cart",
+                element: <PrivateRoutes><Cart></Cart> </PrivateRoutes>
             },
             {
                 path: "*",

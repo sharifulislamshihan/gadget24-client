@@ -8,25 +8,25 @@ const ExploreUs = () => {
                 <Carousel options={{ loop: true }} plugins={[autoPlay()]}>
                     <Carousel.Slides>
                         <Carousel.Item>
-                            <img src="https://i.ibb.co/RpJB0yq/explore0.jpg" alt="" />
+                            <img src="https://res.cloudinary.com/drdgi9qdu/image/upload/v1723304030/explore0_biq4oa.jpg" alt="" />
                         </Carousel.Item>
 
                         <Carousel.Item>
-                            <img src="https://i.ibb.co/LYmGCB3/explore2.jpg" alt="" />
+                            <img src="https://res.cloudinary.com/drdgi9qdu/image/upload/v1723304029/explore4_i5c0bu.jpg" alt="" />
                         </Carousel.Item>
 
                         <Carousel.Item>
-                            <img src="https://i.ibb.co/fkPsC04/explore3.jpg" alt="" />
-                        </Carousel.Item>
-
-
-                        <Carousel.Item>
-                            <img src="https://i.ibb.co/FJQn9Nd/explore1.jpg" alt="" />
+                            <img src="https://res.cloudinary.com/drdgi9qdu/image/upload/v1723304030/explore3_woeyiq.jpg" alt="" />
                         </Carousel.Item>
 
 
                         <Carousel.Item>
-                            <img src="https://i.ibb.co/gyxCC5h/explore4.jpg" alt="" />
+                            <img src="https://res.cloudinary.com/drdgi9qdu/image/upload/v1723304029/explore2_slziwm.jpg" alt="" />
+                        </Carousel.Item>
+
+
+                        <Carousel.Item>
+                            <img src="https://res.cloudinary.com/drdgi9qdu/image/upload/v1723304030/explore1_loywaq.jpg" alt="" />
                         </Carousel.Item>
                     </Carousel.Slides>
                 </Carousel>

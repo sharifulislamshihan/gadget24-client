@@ -1,7 +1,6 @@
 import autoPlay from 'embla-carousel-autoplay'
 import { Carousel } from 'keep-react'
 
-
 const Banner = () => {
     return (
         <div className="flex flex-col gap-5 lg:flex-row">
@@ -11,13 +10,13 @@ const Banner = () => {
 
                         <Carousel.Item>
                             <div>
-                                <img src="https://i.postimg.cc/k4YnQCPP/Beige-Minimalist-Fashion-Product-Promotion-Facebook-Ad.png" alt="" />
+                                <img src="https://res.cloudinary.com/drdgi9qdu/image/upload/v1723299979/Banner-1_npxxp7.png" alt="" />
                             </div>
                         </Carousel.Item>
 
                         <Carousel.Item>
                             <div className="flex items-center justify-center rounded-xl border border-metal-100 bg-primary-25">
-                                <img src="https://i.ibb.co/3BnvbwG/mblbanner.jpg" alt="" />
+                                <img src="https://res.cloudinary.com/drdgi9qdu/image/upload/v1723300066/Banner-2_asdhoi.jpg" alt="" />
                             </div>
                         </Carousel.Item>
 
@@ -40,15 +39,15 @@ const Banner = () => {
 
 
                 <div className="rounded-xl">
-                    <img src="https://i.ibb.co/3BnvbwG/mblbanner.jpg" alt="" />
+                    <img src="https://res.cloudinary.com/drdgi9qdu/image/upload/v1723300066/Banner-2_asdhoi.jpg" alt="" />
                 </div>
 
                 <div className="rounded-xl hidden lg:block">
-                    <img src="https://i.postimg.cc/k4YnQCPP/Beige-Minimalist-Fashion-Product-Promotion-Facebook-Ad.png" alt="" />
+                    <img src="https://res.cloudinary.com/drdgi9qdu/image/upload/v1723299979/Banner-1_npxxp7.png" alt="" />
                 </div>
 
                 <div className="rounded-xl">
-                    <img src="https://i.ibb.co/3BnvbwG/mblbanner.jpg" alt="" />
+                    <img src="https://res.cloudinary.com/drdgi9qdu/image/upload/v1723300066/Banner-2_asdhoi.jpg" alt="" />
                 </div>
 
             </div>

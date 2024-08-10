@@ -5,6 +5,8 @@
 import { NavLink, useNavigate } from "react-router-dom";
 import {
     Avatar,
+    Badge,
+    Divider,
     Dropdown,
     DropdownAction,
     DropdownContent,
@@ -19,7 +21,7 @@ import {
     NavbarContainer,
     NavbarList,
 } from 'keep-react'
-import { ShoppingCart, User } from "phosphor-react";
+import { Gear, Question, ShoppingBagOpen, ShoppingCart, SignOut, User } from "phosphor-react";
 import { BiSearch } from "react-icons/bi";
 import { useContext } from "react";
 import { SearchContext } from "../../Providers/SearchProvider";
@@ -104,9 +106,15 @@ const Header = () => {
 
 
                         <div className="flex gap-5 items-center">
-                            <NavLink className='hidden md:block'>
-                                <ShoppingCart size={20} color="#444" >
-                                </ShoppingCart>
+                            <NavLink to='/cart' className=' hidden md:block'>
+                                <div className="flex">
+                                    <ShoppingCart  size={20} color="#444" >
+                                    </ShoppingCart>
+                                    <Badge 
+                                    size="sm"
+                                    className='text-black'
+                                    color="success">+2</Badge>
+                                </div>
                             </NavLink>
 
                             {
@@ -118,11 +126,52 @@ const Header = () => {
                                             </DropdownAction>
                                             <DropdownContent>
                                                 <DropdownList>
-                                                    <DropdownItem>Statistics</DropdownItem>
-                                                    <DropdownItem>Duplicate</DropdownItem>
-                                                    <DropdownItem>Account</DropdownItem>
-                                                    <DropdownItem
-                                                        onClick={handleLogOut}>Logout</DropdownItem>
+                                                    <DropdownItem>
+
+                                                        <div className="flex gap-3">
+                                                            <Avatar size="md" shape="circle" img="" />
+                                                            <h6 className=" font-semibold my-auto">John Doe</h6>
+                                                        </div>
+
+                                                    </DropdownItem>
+                                                    <Divider className="my-3" color="secondary" />
+
+                                                    <DropdownItem>
+
+                                                        <div className="flex gap-3">
+                                                            <ShoppingBagOpen size={24} />
+                                                            <h3>My Order</h3>
+                                                        </div>
+
+                                                    </DropdownItem>
+
+
+                                                    <DropdownItem>
+
+                                                        <div className="flex gap-3">
+                                                            <Gear size={24} />
+                                                            <h3>Settings & Privacy</h3>
+                                                        </div>
+
+                                                    </DropdownItem>
+
+
+                                                    <DropdownItem>
+
+                                                        <div className="flex gap-3">
+                                                            <Question size={24} />
+                                                            <h3>Help Center</h3>
+                                                        </div>
+
+                                                    </DropdownItem>
+
+
+                                                    <DropdownItem>
+                                                        <div className="flex gap-3">
+                                                            <SignOut size={24} />
+                                                            <h3 onClick={handleLogOut}>Log Out</h3>
+                                                        </div>
+                                                    </DropdownItem>
                                                 </DropdownList>
                                             </DropdownContent>
                                         </Dropdown>

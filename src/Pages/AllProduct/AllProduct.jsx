@@ -11,6 +11,7 @@ import Swal from "sweetalert2";
 import useCart from "../../Hooks/useCart";
 import { Helmet } from "react-helmet-async";
 
+
 const AllProduct = () => {
 
     const [categories, setCategories] = useState([]);
@@ -21,7 +22,6 @@ const AllProduct = () => {
     const [totalPages, setTotalPages] = useState(0);
     const [totalProducts, setTotalProducts] = useState(0);
     const [selectedBrand, setSelectedBrand] = useState('');
-
 
     const { user } = useContext(AuthContext);
     const [refetch] = useCart();
@@ -84,40 +84,6 @@ const AllProduct = () => {
         setPage(0);
     };
 
-    // add to cart
-    const handleAddToCart = product => {
-        if (!user) {
-            navigate('/login', { state: { from: location } });
-        }
-        else {
-            console.log(product);
-            if (user && user.email) {
-                const productCartItem = {
-                    productCart: product._id,
-                    email: user.email,
-                    name: product.name,
-                    price: product.price,
-                    quantity: 1,
-                }
-                axios.post(`${api}carts`, productCartItem)
-                    .then(res => {
-                        if (res.data.insertedId) {
-                            Swal.fire({
-                                position: "top-end",
-                                icon: "success",
-                                title: `${product.name} added to cart..`,
-                                showConfirmButton: false,
-                                timer: 1500
-                            });
-                            // refetch the cart
-                            refetch();
-
-                        }
-                    })
-            }
-        }
-
-    }
 
     // handle product per page
     const handleItemsPerPageChange = (e) => {
@@ -235,16 +201,21 @@ const AllProduct = () => {
                                                 <h3 className="text-lg font-semibold text-center">৳ {product.price}</h3>
 
                                             </CardContent>
-                                            <div className=" mb-5 flex justify-center">
-                                                <Button
-                                                    size="sm" color="secondary"
-                                                    className="w-3/4 hover:bg-slate-500 hover:text-white"
-                                                    variant="outline"
-                                                    onClick={() => handleAddToCart(product)}
-                                                >
-                                                    Add to Cart
-                                                </Button>
-                                            </div>
+
+                                            <Link to={`/products/${product._id}`}>
+
+                                                <div className=" mb-5 flex justify-center">
+
+                                                    <Button
+                                                        size="sm" color="secondary"
+                                                        className="w-3/4 hover:bg-slate-500 hover:text-white"
+                                                        variant="outline"
+                                                    >
+                                                        Add to Cart
+                                                    </Button>
+
+                                                </div>
+                                            </Link>
                                         </Card>
                                     </div>
                                 ))
@@ -272,42 +243,43 @@ const AllProduct = () => {
             </div>
 
 
+            {/* Pagination */}
             {
                 totalPages > 1 && (
                     /* Pagination */
-            <Pagination shape="circle" className="flex justify-center my-12">
+                    <Pagination shape="circle" className="flex justify-center my-12">
 
-            {/* previous button */}
-            <PaginationNavigator
-                className="hover:bg-slate-200"
-                onClick={handlePreviousPage}
-                shape="circle">
-                <CaretLeft size={18}
-                    color="#0000FF"
-                />
-            </PaginationNavigator>
-            <PaginationList>
-                {
-                    [...Array(totalPages).keys()].map(pageNum => (
-                        <PaginationItem
-                            key={pageNum}
-                            className={page === pageNum ? 'bg-black text-white' : ''}
-                            onClick={() => handlePageChange(pageNum)}
-                        >
-                            {pageNum + 1}
-                        </PaginationItem>
-                    ))}
-            </PaginationList>
+                        {/* previous button */}
+                        <PaginationNavigator
+                            className="hover:bg-slate-200"
+                            onClick={handlePreviousPage}
+                            shape="circle">
+                            <CaretLeft size={18}
+                                color="#0000FF"
+                            />
+                        </PaginationNavigator>
+                        <PaginationList>
+                            {
+                                [...Array(totalPages).keys()].map(pageNum => (
+                                    <PaginationItem
+                                        key={pageNum}
+                                        className={page === pageNum ? 'bg-black text-white' : ''}
+                                        onClick={() => handlePageChange(pageNum)}
+                                    >
+                                        {pageNum + 1}
+                                    </PaginationItem>
+                                ))}
+                        </PaginationList>
 
-            {/* next button */}
-            <PaginationNavigator
-                className="hover:bg-slate-200"
-                onClick={handleNextPage}
-                shape="circle">
-                <CaretRight size={18}
-                    color="#0000FF" />
-            </PaginationNavigator>
-        </Pagination>
+                        {/* next button */}
+                        <PaginationNavigator
+                            className="hover:bg-slate-200"
+                            onClick={handleNextPage}
+                            shape="circle">
+                            <CaretRight size={18}
+                                color="#0000FF" />
+                        </PaginationNavigator>
+                    </Pagination>
                 )
             }
         </div>

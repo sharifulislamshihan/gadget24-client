@@ -14,7 +14,7 @@
     "axios": "^1.7.2",
     "embla-carousel-autoplay": "^8.0.4",
     "firebase": "^10.12.2",
-    "keep-react": "^1.4.0",
+    "keep-react": "^1.4.3",
     "localforage": "^1.10.0",
     "match-sorter": "^6.3.4",
     "phosphor-react": "^1.4.1",

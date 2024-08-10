@@ -1,9 +1,13 @@
-import { Badge, Button, Divider, Label, NumberInput, NumberInputBox, NumberInputButton, Radio, Tab, TabItem, TabList } from 'keep-react';
+import { Badge, Button, Divider, NumberInput, NumberInputBox, NumberInputButton, Tab, TabItem, TabList } from 'keep-react';
 import { Minus, Plus } from 'phosphor-react';
 import { useContext, useState } from 'react';
 import { BiHome } from 'react-icons/bi';
-import { NavLink, useLoaderData, useLocation, useNavigate } from 'react-router-dom';
+import { useLoaderData, useLocation, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../Providers/AuthProvider';
+import axios from 'axios';
+import { api } from '../Shared/SharedFetchApi';
+import Swal from 'sweetalert2';
+import useCart from '../../Hooks/useCart';
 
 
 
@@ -13,20 +17,63 @@ const SingleProduct = () => {
     const { user } = useContext(AuthContext);
     const navigate = useNavigate();
     const location = useLocation()
-    const [number, setNumber] = useState(0);
+    const [number, setNumber] = useState(1);
+    const [, refetch] = useCart();
 
     const product = productData;
-    console.log(product);
+    console.log("Product Data : ", product);
+
+    console.log(number);
 
     // add to cart
-    const handleAddToCart = (_id) =>{
-        if(!user){
+    const handleAddToCart = product => {
+        console.log("product from click : ", product);
+        if (!user) {
             navigate('/login', { state: { from: location } });
         }
-        else{
-            console.log(_id);
+        else {
+            if (user && user.email) {
+                const productCartItem = {
+                    productCart: product._id,
+                    image: product.image,
+                    email: user.email,
+                    name: product.name,
+                    price: product.price,
+                    quantity: number,
+                    status : "unpaid",
+                }
+                console.log("In the cart", productCartItem);
+                axios.post(`${api}carts`, productCartItem)
+                    .then(res => {
+                        if (res.data.insertedId) {
+                            Swal.fire({
+                                title: "Are you sure?",
+                                html: `You want to order <strong>${product.name}</strong>`,
+                                showCancelButton: true,
+                                confirmButtonColor: "#3085d6",
+                                cancelButtonColor: "#d33",
+                                confirmButtonText: "Yes, Confirm it!",
+                                imageUrl: `${product.image}`,
+                                
+                                imageAlt: `Image of ${product.image}`,
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    Swal.fire({
+                                        title: "Confirmed",
+                                        html: `<strong>${product.name}</strong> added to cart`,
+                                        icon: "success"
+                                    });
+                                    // refetch the cart
+                                    refetch();
+                                }
+                            });
+                        }
+                    })
+            }
         }
+
     }
+
     return (
         <div className='mx-5'>
             <div className="flex justify-center md:justify-start">
@@ -53,9 +100,9 @@ const SingleProduct = () => {
                         </div>
                         <div>
                             <Badge color={
-                                product.quantity > 0 ?  'success' : 'error'
+                                product.quantity > 0 ? 'success' : 'error'
 
-                            }>{product.quantity > 0 ?  'In Stock' : 'Out of Stock'}</Badge>
+                            }>{product.quantity > 0 ? 'In Stock' : 'Out of Stock'}</Badge>
                         </div>
                     </div>
                     <div className='my-3'>
@@ -110,7 +157,7 @@ const SingleProduct = () => {
 
 
                             <div>
-                                <h3>Quantity</h3>
+                                <h3 className='my-3'>Quantity</h3>
                                 <fieldset className="space-y-3">
                                     <NumberInput>
                                         <NumberInputButton disabled={number === 0} onClick={() => setNumber((prev) => prev - 1)}>
@@ -128,7 +175,8 @@ const SingleProduct = () => {
                                 size="sm" color="secondary"
                                 className=" my-5 w-full hover:bg-slate-500 hover:text-white"
                                 variant="outline"
-                                onClick={() => handleAddToCart(product._id)}
+                                onClick={() => handleAddToCart(product)}
+                                disabled = {number > product.quantity}
                             >
                                 Add to Cart
                             </Button>
